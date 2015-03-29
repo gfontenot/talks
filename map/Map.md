@@ -325,3 +325,8 @@ let numberOfEmployees = company?.numberOfEmployees ?? 0 // Int
 - `func map<T, U>(a: Result<T>,   f: T -> U) -> Result<U>`
 
 Aw shit now you understand Functors
+
+^ Swift as a language is in flux right now, and we're shaping its future.
+
+^ I'm not saying that using `map` and other functional programming concepts are the end all solution for everything, but they are tools that are available for you, and avoiding them entirely because they come from a different idiom seems silly.
+
