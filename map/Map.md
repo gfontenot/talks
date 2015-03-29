@@ -2,13 +2,13 @@
 
 ## How I Learned to Stop Worrying and Love the Functor ##
 
-^ I really like Swift
+^ Before Swift came out, I started getting really into Haskell, which is a strongly typed, purely functional language used a lot in academia by language theorists.
 
-^ I really really like functional programming
+^ Haskell hasn't had a lot of success as a language that you actually use in production (so far)
 
-^ I honestly think it leads to cleaner, more straight forward, safer code
+^ So when Apple announced Swift in June, I got excited at the possibility to take some of the things I had learned and loved in Haskell, and bring them over to a platform that I could actually make things with.
 
-^ I'm involved in a few libraries that try to push the limits of the language and force it into being a much more functional language than it feels like it was intended to be
+^ This has led me to be involved in a few libraries that have been accused (justifiably) of trying to push the limits of the language and force it into being a much more functional language than it was probably intended to be originally
 
 ---
 
@@ -28,15 +28,17 @@ public func >>-<T, U>(a: [T], f: T -> [U]) -> [U]
 public func pure<T>(a: T) -> [T]
 ```
 
-^ I'm the maintainer of Runes, a library that introduces functional operators for Optional and Array
+^ Probably the most obvious offender of this claim is Runes.
+
+^ Runes is a library that adds infix operators for some functional concepts (such as `map`, `apply`, and `flatMap`) that help bring Swift's syntax a little closer to that of Haskell, and open the doors for some pretty neat tricks in the language.
 
 ---
 
 ## Argo ##
 
 ```swift
-extension User: JSONDecodable {
-  static func fromJSON(j: JSON) -> ParserResult<User> {
+extension User: Decodable {
+  static func decode(j: JSON) -> Decoded<User> {
     return User.create
       <^> j <| "id"
       <*> j <| "first_name"
@@ -46,43 +48,47 @@ extension User: JSONDecodable {
 }
 ```
 
-^ I'm also heavily involved with Argo, which uses functional concepts (in this case, Optional's ability to be used as an Applicative) to ease the pain of JSON parsing in Swift
+^ More interesting to me, is Argo, which uses these functional concepts, along with some fancy tricks using Generics and a couple of custom operators of its own to ease the pain of parsing JSON in Swift, which is kind of a famously annoying problem at this point.
+
+^ If you've ever tried doing JSON parsing manually in Swift, you probably know what I'm talking about.
 
 ---
 
 ![](http://gifsec.com/wp-content/uploads/GIF/2014/03/Stare-What-GIF.gif)
 
+^ Every time I start talking about this stuff, I get at least one of these.
+
 ^ This is a totally reasonable response to those last couple of slides
 
-^ I'm not advocating jumping directly to these libraries, but once 
+^ Using these libraries introduces a large amount of educational overhead for your team
 
-^ Using these libraries introduces a large amount of overhead to the education requirements for your team
+^ Not only do developers have to understand Swift, Apple's frameworks, and any added dependencies, but now they also have to understand this fairly opaque set of characters and punctuation littered throughout your codebase.
+
+^ This is daunting, and can be offputting, especially in a community as mature as ours.
 
 ---
 
 ![](images/winter-is-coming.gif)
 
-^ It's clear (to me) that this is the direction programming is headed
+^ _but_
+
+^ It's clear (to me) that this really is the direction that we're headed in.
+
+^ The momentum is real.
 
 ^ These concepts _aren't going away_. You can ignore them for now, but at some point it's going to catch up with you.
 
-^ We need to build up a foundation of knowledge inside the community that we can build upon it and advance as a community
-
----
-
-## We can do better ##
-
-^ We need to take a step back from the brink and re-think the way we communicate these concepts to newcomers.
-
-^ the operators are just sugar. What's _really_ important are the concepts behind the sugar.
+^ We need to create a foundation of knowledge inside the community that we can build upon to avoid stagnation
 
 ---
 
 ## (Re-)Introducing: `map` ##
 
+^ The bottom line is that operators are just sugar. What's _really_ important are the concepts behind the sugar.
+
 ^ I think that `map` is a good introduction to these concepts, without getting bogged down with operators or funky types
 
-^ you're probably at least a little familiar with how it works, but it's almost certainly a way more powerful concept than you realize
+^ you're probably at least a little familiar with how it works, but it's almost certainly a more powerful concept than you realize
 
 ---
 
