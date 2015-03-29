@@ -94,7 +94,7 @@ extension User: Decodable {
 
 ## `Array.map` ##
 
-^ `map` is most commonly associated with `Array`s because of usage in languages like Ruby.
+^ `map` is most commonly associated with `Array`s because of usage in languages like Ruby, which makes it a pretty good starting point for us.
 
 ---
 
@@ -111,7 +111,7 @@ for (NSNumber *number in numbers) {
 NSArray *numbersPlusOne = [mutable copy];
 ```
 
-^ If we wanted to create an array of objects by applying a transformation to an existing list, this was all we had.
+^ So jumping back, in Objective-C if we wanted to create an array of objects by applying a transformation to an existing list, this was all we had.
 
 ^ This isn't ideal
 
@@ -127,17 +127,23 @@ NSArray *numbersPlusOne = [mutable copy];
 
 ```swift
 extension Array<T> {
-  func map<U>(transform: T -> U) -> [U]
+  func map<U>(transform: T -> U) -> [U] {
+    var array: [U] = []
+
+    for x in self {
+      array.append(transform(x))
+    }
+
+    return array
+  }
 }
 ```
 
-^ Here's the type signature for `map` as it's defined on `Array` in the standard lib.
+^ So here's a possible implementation for `Array.map`, which is included in the standard lib.
 
-^ Given a list of objects of type T (self) and a function that transforms an object from type T to type U, return a list of objects of type U.
+^ You can see that `map` is really just a simple abstraction of that same iteration pattern we used to use in Objective-C
 
-^ Note that `T` is the type contained by the array, while `U` is a generic type specific to this one function.
-
-^ `T` and `U` can be the same type, but they don't have to be
+^ So why is this interesting?
 
 ---
 
