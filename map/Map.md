@@ -94,7 +94,11 @@ extension User: Decodable {
 
 ## `Array.map` ##
 
-^ `map` is most commonly associated with `Array`s because of usage in languages like Ruby, which makes it a pretty good starting point for us.
+^ So `map` is probably most commonly associated with `Array`s
+
+^ It's used a lot in languages like Ruby, and I think this makes it a pretty good starting point for us.
+
+^ If you aren't familiar, `Array`'s version of `map` lets you create a new array of objects by applying a transformation to an existing array.
 
 ---
 
@@ -105,23 +109,28 @@ NSArray *numbers = @[@1, @2, @3, @4];
 NSMutableArray *mutable = [NSMutableArray array];
 
 for (NSNumber *number in numbers) {
-    mutable.addObject(@(number.integerValue + 1));
+    NSNumber *newNumber = @([number integerValue] + 1);
+    [mutable addObject: newNumber];
 }
 
 NSArray *numbersPlusOne = [mutable copy];
 ```
 
-^ So jumping back, in Objective-C if we wanted to create an array of objects by applying a transformation to an existing list, this was all we had.
+^ So thinking back to Objective-C: if we wanted to something like that, this was all we had.
 
-^ This isn't ideal
+^ (Walk through code)
 
-^ lose immutability unless we copy the resulting array
+^ This isn't ideal for a number of reasons
 
-^ manually iterating through the list
+^ You lose immutability unless we manually copy the resulting array
 
-^ not very reusable
+^ You have to manage the iteration yourself
 
-^ `enumerateObjectsUsingBlock` is a little better because you can pass a block, but doesn't go far enough
+^ And this isn't really very reusable
+
+^ `enumerateObjectsUsingBlock` is a little better, but doesn't really go far enough
+
+^ So how does Swift solve this problem?
 
 ---
 
@@ -131,7 +140,8 @@ extension Array<T> {
     var array: [U] = []
 
     for x in self {
-      array.append(transform(x))
+      let y = transform(x)
+      array.append(y)
     }
 
     return array
@@ -143,6 +153,8 @@ extension Array<T> {
 
 ^ You can see that `map` is really just a simple abstraction of that same iteration pattern we used to use in Objective-C
 
+^ (Walk through code)
+
 ^ So why is this interesting?
 
 ---
@@ -152,21 +164,59 @@ extension Array<T> {
 ```swift
 let numbers = [1, 2, 3, 4]
 let numbersPlusOne = numbers.map { $0 + 1 } // [2, 3, 4, 5]
+```
 
+^ For one, moving that abstraction up a level leads to much cleaner code
+
+^ You no longer have to manage the details of the iteration at this level, and can instead focus on the transformation, which is really the important part of what you're trying to do.
+
+^ This is much more declarative, and much less procedural. That makes this code easier to reason about; there are fewer moving parts.
+
+^ You also maintain immutability. You can assign the result directly to `let` and now you have your resulting array as a local constant.
+
+---
+
+## bonus ##
+
+```swift
 func addOne(x: Int) -> Int {
   return x + 1
 }
 
+let numbers = [1, 2, 3, 4]
 let moreNumbers = numbers.map(addOne) // [2, 3, 4, 5]
 ```
 
-^ No manual iteration
+^ As an added bonus, because Swift functions are closures and Swift closures are functions, you can easily wrap that transformation up in a reusable function, or an instance method, and just pass it directly to `map`.
 
-^ Maintain immutability! Assign directly to `let`.
+^ This means that your code is even _more_ reusable.
 
-^ Use a named function and pass it directly to `map`
+---
 
-^ I think this is a safer, cleaner, overall nicer option than manual iteration
+## Real world usage ##
+
+```swift
+struct User {
+  let name: String
+  let email: String
+}
+
+let mcNulty = User(name: "Jimmy McNulty", email: "mcnulty@bpd.gov")
+let theBunk = User(name: "Bunk Moreland", email: "thebunk@bpd.gov")
+
+let users = [mcNulty, theBunk]
+let emails = users.map { $0.email }
+
+sendEmails(emails)
+```
+
+^ So how is this useful in the real world?
+
+^ So in this case, we've got some users, Jimmy and Bunk, and we want to send them emails.
+
+^ `map` is able to make quick work of this by letting us map a transformation (in this case, simply accessing a property) over the original array.
+
+^ That leaves us with a simple list of email addresses that we can pass on down the line.
 
 ---
 
