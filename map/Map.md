@@ -84,7 +84,7 @@ extension User: Decodable {
 
 ## (Re-)Introducing: `map` ##
 
-^ The bottom line is that operators are just sugar. What's _really_ important are the concepts behind the sugar.
+^ The bottom line is that operators are just syntactic sugar, and aren't that important. What's _really_ important are the concepts behind the sugar.
 
 ^ I think that `map` is a good introduction to these concepts, without getting bogged down with operators or funky types
 
@@ -220,11 +220,23 @@ sendEmails(emails)
 
 ---
 
+![](http://dl.dropboxusercontent.com/u/452364/gifs/ford-dance.gif)
+
+^ That was a lot of code, and there's more coming, so I think we all deserve a quick break.
+
+^ This is, I believe, one of your national heroes?
+
+^ Moving on...
+
+---
+
 ## `Optional.map` ##
 
-^ Swift also introduces `map` for Optional values
+^ So Swift also introduces `map` for Optional values
 
-^ This is much less common to see. Concept is taken from more functional languages such as Haskell
+^ This is much less common. Concept is taken from more functional languages such as Haskell.
+
+^ `map` for Optional applies a function to a value if it exists, and returns `.None` if it doesn't.
 
 ---
 
@@ -237,11 +249,13 @@ enum Optional<T> {
 }
 ```
 
-^ Quick recap in case you aren't familiar.
+^ This is what Optional looks like
 
-^ Optionals encapsulate the concept of a value's existence.
+^ Optionals encapsulate the concept of a value's existence. It replaces `nil` in Objective-C
 
 ^ Can't use the value directly. It forces you to deal with the possibility of there not being a value
+
+^ That can be really painful for people if they aren't used to this idea.
 
 ---
 
@@ -255,11 +269,13 @@ if let string = myOptional {
 }
 ```
 
+^ The most common way of dealing with this is with conditional unwrapping, also known as `if let` statements.
+
 ^ This is the most basic way to pull the value out of an optional.
 
-^ `if let` statements check for the presence of a value, and assigns that value to a local constant if it exists. You can then use that constant inside the scope of the conditional
+^ `if let`s check for the presence of a value, and assigns that value to a local constant if it exists. You can then use that constant inside the scope of the conditional
 
-^ This is a really nice piece of syntax to have in the standard lib, but it introduces some weird things to have to consider, like potentially shadowing local variables and potential nesting.
+^ This is a really nice piece of syntax to have in the standard lib, but it introduces some weird things to have to consider, like potentially shadowing local variables and that nesting tree of doom, which is somewhat alleviated in Swift 1.2.
 
 ^ Optional's version of `map` can streamline things.
 
@@ -269,23 +285,9 @@ if let string = myOptional {
 
 ```swift
 extension Optional<T> {
-  func map<U>(f: T -> U) -> U?
-}
-```
-
-^ Given an Optional value of the type T (self) and a function that transforms an object from type T to type U, return an optional value of the type U
-
-^ Ok, but what does that actually mean? It might help to see an implementation
-
----
-
-## `Optional.map` ##
-
-```swift
-extension Optional<T> {
-  func map<U>(f: T -> U) -> U? {
+  func map<U>(transformation: T -> U) -> U? {
     if let x = self {
-      return f(x)
+      return transformation(x)
     } else {
       return .None
     }
@@ -297,58 +299,47 @@ extension Optional<T> {
 
 ^ `map` can be implemented as a simple wrapper around `if let`
 
-^ It can _also_ be implemented using a switch statement and pattern matching, but I'll show an example of that later.
-
-^ In either case, we check to see if `self` has a value. If it does, we return the result of applying the function to the unwrapped value
-
-^ if `self` is `.None`, we return `.None`
+^ (walk through code)
 
 ^ You can think of `map` as a way to lift functions from the world of non-optional values up into the world where these values might not exist.
 
-^ This acts as a way to separate the concern of optionality and isolate it to this function
+^ This acts as a way to separate the concern of optionality and isolate it to this function, the same way that `map` for Array separates the concern of iteration
 
 ^ This is insanely powerful, because it means that you can postpone the fact that there might not be a value for as long as possible.
 
-^ it also means you can keep your core functions pure and use non-optional values, but still easily use them with Optionals
+^ it also means you can keep your core functions pure and use non-optional values
 
 ---
 
 ## usage ##
 
 ```swift
-let optional = "foo"
+let optional: String? = "foo"
 let foobar = optional.map { $0 + "bar" } // .Some("foobar")
 
-func appendBar(x: String) -> String {
-  return x + "bar"
-}
-
-let moreFoobar = optional.map(appendBar) // .Some("foobar")
-
+let otherOptional: String? = .None
+let nope = optional.map { $0 + "bar" } // .None
 ```
 
-^ usage is identical to map for arrays
-
-^ Notice that `appendBar` gets to deal with non-optional values
-
-^ Note that the return value is still an optional string
+^ So for example, using `map`, we can easily append something to this string if it exists, but if it _doesn't_, it essentially becomes a noop, the same way we'd expect `nil` to act in Objective-C
 
 ---
 
 ## Usage ##
 
 ```swift
-let nothing: String? = .None
-let something: String = "Hello World"
+func appendBar(x: String) -> String {
+  return x + "bar"
+}
 
-let nope = optional.map(appendBar) // .None
-let stillNope = nope.map(appendBar) // .None
-let huzzah = something.map(appendBar) // .Some("Hello Worldbar")
+let optional = "foo"
+let moreFoobar = optional.map(appendBar) // .Some("foobar")
 ```
 
-^ The benefit here is that the syntax doesn't change at all when there is no value.
+^ And again, Swift functions are closures, and vice versa, so we can use named
+functions with `map` directly.
 
-^ This makes `.None` work very much like `nil` in Objective-C
+^ Notice that `appendBar` gets to deal with non-optional values
 
 ---
 
@@ -362,9 +353,11 @@ let company = user.map { Company(employees: [$0]) } // Company?
 let numberOfEmployees = company?.numberOfEmployees ?? 0 // Int
 ```
 
-^ The fact that dictionary subscripting returns an optional could throw a wrench in our plans
+^ So for example, the fact that dictionary subscripting returns an Optional value can easily make things messy
 
-^ We can carry the fact that we might not have a name through the implementation of the function, and only worry about dealing with that failure when we actually need a value
+^ With `map` we can carry the fact that we might not have a value through the implementation of the function, and only worry about dealing with that failure when we actually need to return something
+
+^ (Walk through code)
 
 ---
 
