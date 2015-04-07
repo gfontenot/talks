@@ -361,15 +361,174 @@ let numberOfEmployees = company?.numberOfEmployees ?? 0 // Int
 
 ---
 
-## Big Finish ##
+![](https://desperateandunrehearsed.files.wordpress.com/2015/02/whats-your-point.gif)
 
-- `func map<T, U>(a: Array<T>,    f: T -> U) -> Array<U>`
-- `func map<T, U>(a: Optional<T>, f: T -> U) -> Optional<U>`
-- `func map<T, U>(a: Result<T>,   f: T -> U) -> Result<U>`
+^ So what's the point to all of this?
 
-Aw shit now you understand Functors
+---
+
+## Spot the difference ##
+
+```swift
+// Array
+func map<T, U>(x: [T], f: T -> U) -> [U]
+
+// Optional
+func map<T, U>(x: T?, f: T -> U) -> U?
+```
+
+^ These are the same two functions we've been talking about, these are just the free function versions.
+
+^ They work exactly the same, don't worry too much about it, I just want to be able to look at at the full type signatures.
+
+^ They look similar, right?
+
+^ Both functions, for example, take a function from `T` to `U` as an argument
+
+^ They also both take _something_ to do with a value of the type `T` and return something to do with a value of the type `U`
+
+^ But they aren't quite the same, there's something different, it's just hard to tell _exactly_ what that difference is.
+
+---
+
+## Spot the differences ##
+
+```swift
+// Array
+func map<T, U>(x: Array<T>, f: T -> U) -> Array<U>
+
+// Optional
+func map<T, U>(x: Optional<T>, f: T -> U) -> Optional<U>
+```
+
+^ If we remove the syntactic sugar around the types, the picture starts to clear up a bit
+
+^ Array and Optional start to look like a wrapper type for the generic types `T` and `U`
+
+---
+
+## Contextual Types ##
+
+```swift
+func map<T, U>(x:    Array<T>, f: T -> U) ->    Array<U>
+func map<T, U>(x: Optional<T>, f: T -> U) -> Optional<U>
+```
+
+^ In fact, we can think of these types as contexts for their contained types
+
+^ In the case of Array, we're working with the context of having multiple values. So when we use `map` with array, we apply the function to every possible value.
+
+^ And for Optional, we're working with the concept of a value's presence. So we apply the function if it's there, and return `.None` if it isn't.
+
+^ But there are more contexts that seem like they will fit this pattern.
+
+---
+
+## Contextual Types ##
+
+```swift
+func map<T, U>(x:    Array<T>, f: T -> U) ->    Array<U>
+func map<T, U>(x: Optional<T>, f: T -> U) -> Optional<U>
+func map<T, U>(x:   Result<T>, f: T -> U) ->   Result<U>
+```
+
+^ Result can represent the context of a failable operation.
+
+^ When we use `map` with Result, we apply the function to the value if the result was successful, and pass along the failure if it wasn't.
+
+---
+
+## Contextual Types ##
+
+```swift
+func map<T, U>(x:    Array<T>, f: T -> U) ->    Array<U>
+func map<T, U>(x: Optional<T>, f: T -> U) -> Optional<U>
+func map<T, U>(x:   Result<T>, f: T -> U) ->   Result<U>
+func map<T, U>(x:   Future<T>, f: T -> U) ->   Future<U>
+```
+
+^ We could also represent the context of a value we don't have yet, using Future
+
+^ So if we `map` over a `Future` value, we apply the function to the value when we get it.
+
+---
+
+## Contextual Types ##
+
+```swift
+func map<T, U>(x:    Array<T>, f: T -> U) ->    Array<U>
+func map<T, U>(x: Optional<T>, f: T -> U) -> Optional<U>
+func map<T, U>(x:   Result<T>, f: T -> U) ->   Result<U>
+func map<T, U>(x:   Future<T>, f: T -> U) ->   Future<U>
+func map<T, U>(x:   Signal<T>, f: T -> U) ->   Signal<U>
+```
+
+^ Or maybe we want to represent the context of a value that changes over time, in which case we might look at Signal
+
+^ Mapping over a Signal of values leaves us with a new signal containing the transformed values.
+
+---
+
+![](http://www.reactiongifs.us/wp-content/uploads/2014/05/everybody_got_that_spaceballs.gif)
+
+^ So what if we could generalize that surrounding type into something more reusable.
+
+^ If we could create some kind of protocol that all of these different types could conform to, we'd be able reduce all of those free `map` functions down into a single implementation.
+
+---
+
+## What if... ##
+
+```swift
+protocol Context<T> {
+  func map<U>(f: T -> U) -> Self<U>
+}
+
+func map<C: Context, T, U>(x: C<T>, f: T -> U) -> C<U> {
+  return x.map(f)
+}
+```
+
+^ We might end up with something like this
+
+^ Note that this doesn't compile for a number of reasons that I don't need to get into right now
+
+^ This kind of abstraction would lead to a whole bunch of interesting things
+
+---
+
+## Turns out... ##
+
+```swift
+protocol Functor<T> {
+  func map<U>(f: T -> U) -> Self<U>
+}
+
+func map<C: Functor, T, U>(x: C<T>, f: T -> U) -> C<U> {
+  return x.map(f)
+}
+```
+
+^ As it turns out, this is what a Functor is.
+
+---
 
 ^ Swift as a language is in flux right now, and we're shaping its future.
 
 ^ I'm not saying that using `map` and other functional programming concepts are the end all solution for everything, but they are tools that are available for you, and avoiding them entirely because they come from a different idiom seems silly.
+
+---
+
+# Gordon Fontenot #
+## @gfontenot ##
+## thoughtbot.com ##
+## buildphase.fm ##
+
+^ So that's it.
+
+^ You can find me most places as gfontenot
+
+^ Quick plug for thoughtbot. We actually offer coaching for stuff like this.
+
+^ I do a podcast where you can hear me ramble about this and baseball.
 
