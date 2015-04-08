@@ -2,11 +2,13 @@
 
 ## How I Learned to Stop Worrying and Love the Functor ##
 
-^ Before Swift came out, I started getting really into Haskell, which is a strongly typed, purely functional language used a lot in academia by language theorists.
+^ Before Swift came out, I started getting really into Haskell.
 
-^ Haskell hasn't had a lot of success as a language that you actually use in production (so far)
+^ If you don't know about Haskell, it's a strictly typed, purely functional language.
 
-^ So when Apple announced Swift in June, I got excited at the possibility to take some of the things I had learned and loved in Haskell, and bring them over to a platform that I could actually make things with.
+^ It's probably the best way to learn Functional Programming, so if this talk interests you, I'd recommend checking it out.
+
+^ So when Apple announced Swift in June, I got excited at the possibility to take some of the things I had learned and loved in Haskell, and bring them over to a platform that I love as well.
 
 ^ This has led me to be involved in a few libraries that have been accused (justifiably) of trying to push the limits of the language and force it into being a much more functional language than it was probably intended to be originally
 
@@ -49,8 +51,6 @@ extension User: Decodable {
 ```
 
 ^ More interesting to me, is Argo, which uses these functional concepts, along with some fancy tricks using Generics and a couple of custom operators of its own to ease the pain of parsing JSON in Swift, which is kind of a famously annoying problem at this point.
-
-^ If you've ever tried doing JSON parsing manually in Swift, you probably know what I'm talking about.
 
 ---
 
@@ -98,7 +98,7 @@ extension User: Decodable {
 
 ^ It's used a lot in languages like Ruby, and I think this makes it a pretty good starting point for us.
 
-^ If you aren't familiar, `Array`'s version of `map` lets you create a new array of objects by applying a transformation to an existing array.
+^ If you aren't familiar, `Array`'s version of `map` lets you create a new array of objects by applying a transformation to the elements in an existing array.
 
 ---
 
@@ -222,11 +222,9 @@ sendEmails(emails)
 
 ![](http://dl.dropboxusercontent.com/u/452364/gifs/ford-dance.gif)
 
-^ That was a lot of code, and there's more coming, so I think we all deserve a quick break.
+# INTERMISSION #
 
-^ This is, I believe, one of your national heroes?
-
-^ Moving on...
+^ That was a lot of code, I thought we deserved a quick break.
 
 ---
 
@@ -434,6 +432,8 @@ func map<T, U>(x:   Result<T>, f: T -> U) ->   Result<U>
 
 ^ Result can represent the context of a failable operation.
 
+^ Result would have `Success` and `Failure` the same way Optional has `Some` and `None`
+
 ^ When we use `map` with Result, we apply the function to the value if the result was successful, and pass along the failure if it wasn't.
 
 ---
@@ -493,7 +493,7 @@ func map<C: Context, T, U>(x: C<T>, f: T -> U) -> C<U> {
 
 ^ Note that this doesn't compile for a number of reasons that I don't need to get into right now
 
-^ This kind of abstraction would lead to a whole bunch of interesting things
+^ This level of abstraction would lead to a whole bunch of new generalizations that would lead to safer, cleaner code.
 
 ---
 
@@ -509,9 +509,13 @@ func map<C: Functor, T, U>(x: C<T>, f: T -> U) -> C<U> {
 }
 ```
 
-^ As it turns out, this is what a Functor is.
+^ As it turns out, this type already has a name: Functor.
+
+^ a Functor is simply a contextual type that responds to `map`. It's really as simple as that.
 
 ---
+
+![](http://27.media.tumblr.com/tumblr_lex3s2CgQN1qe0eclo1_r9_500.gif)
 
 ^ Swift as a language is in flux right now, and we're shaping its future.
 
