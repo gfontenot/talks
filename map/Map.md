@@ -275,9 +275,9 @@ if let string = myOptional {
 
 ```swift
 extension Optional<T> {
-  func map<U>(transformation: T -> U) -> U? {
+  func map<U>(transform: T -> U) -> U? {
     if let x = self {
-      return transformation(x)
+      return .Some(transform(x))
     } else {
       return .None
     }
