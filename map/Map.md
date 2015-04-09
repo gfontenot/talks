@@ -222,7 +222,7 @@ sendEmails(emails)
 
 ## `Optional.map` ##
 
-^ So Swift also introduces `map` for Optional values
+^ So that's great, and I think it's really useful, but where things start to get interesting to me is when we start looking at Optional's version of `map`.
 
 ^ This is much less common. Concept is taken from more functional languages such as Haskell.
 
