@@ -316,7 +316,7 @@ func appendBar(x: String) -> String {
   return x + "bar"
 }
 
-let optional = "foo"
+let optional: String? = "foo"
 let moreFoobar = optional.map(appendBar) // .Some("foobar")
 ```
 
