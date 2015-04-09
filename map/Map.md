@@ -220,14 +220,6 @@ sendEmails(emails)
 
 ---
 
-![](http://dl.dropboxusercontent.com/u/452364/gifs/ford-dance.gif)
-
-# INTERMISSION #
-
-^ That was a lot of code, I thought we deserved a quick break.
-
----
-
 ## `Optional.map` ##
 
 ^ So Swift also introduces `map` for Optional values
@@ -299,13 +291,7 @@ extension Optional<T> {
 
 ^ (walk through code)
 
-^ You can think of `map` as a way to lift functions from the world of non-optional values up into the world where these values might not exist.
-
 ^ This acts as a way to separate the concern of optionality and isolate it to this function, the same way that `map` for Array separates the concern of iteration
-
-^ This is insanely powerful, because it means that you can postpone the fact that there might not be a value for as long as possible.
-
-^ it also means you can keep your core functions pure and use non-optional values
 
 ---
 
@@ -334,10 +320,11 @@ let optional = "foo"
 let moreFoobar = optional.map(appendBar) // .Some("foobar")
 ```
 
-^ And again, Swift functions are closures, and vice versa, so we can use named
-functions with `map` directly.
+^ And again, Swift functions are closures, and vice versa, so we can use named functions with `map` directly.
 
-^ Notice that `appendBar` gets to deal with non-optional values
+^ Notice that `appendBar` gets to deal with non-optional values.
+
+^ Using Optional's version of `map` means you get to keep your core functions pure.
 
 ---
 
@@ -353,15 +340,17 @@ let numberOfEmployees = company?.numberOfEmployees ?? 0 // Int
 
 ^ So for example, the fact that dictionary subscripting returns an Optional value can easily make things messy
 
-^ With `map` we can carry the fact that we might not have a value through the implementation of the function, and only worry about dealing with that failure when we actually need to return something
-
 ^ (Walk through code)
+
+^ With `map` we can carry the fact that we might not have a value through the implementation of the function, and only worry about dealing with that failure when we actually need to return something
 
 ---
 
 ![](https://desperateandunrehearsed.files.wordpress.com/2015/02/whats-your-point.gif)
 
-^ So what's the point to all of this?
+^ So what's going on here?
+
+^ Why are both of these functions named `map` when they seem to do totally different things?
 
 ---
 
@@ -389,7 +378,7 @@ func map<T, U>(x: T?, f: T -> U) -> U?
 
 ---
 
-## Spot the differences ##
+## Spot the difference ##
 
 ```swift
 // Array
@@ -416,7 +405,7 @@ func map<T, U>(x: Optional<T>, f: T -> U) -> Optional<U>
 
 ^ In the case of Array, we're working with the context of having multiple values. So when we use `map` with array, we apply the function to every possible value.
 
-^ And for Optional, we're working with the concept of a value's presence. So we apply the function if it's there, and return `.None` if it isn't.
+^ And for Optional, we're working with the context of a value's presence. So we apply the function if it's there, and return `.None` if it isn't.
 
 ^ But there are more contexts that seem like they will fit this pattern.
 
@@ -471,7 +460,7 @@ func map<T, U>(x:   Signal<T>, f: T -> U) ->   Signal<U>
 
 ![](http://www.reactiongifs.us/wp-content/uploads/2014/05/everybody_got_that_spaceballs.gif)
 
-^ So what if we could generalize that surrounding type into something more reusable.
+^ So what if we could generalize that contextual type into something more reusable.
 
 ^ If we could create some kind of protocol that all of these different types could conform to, we'd be able reduce all of those free `map` functions down into a single implementation.
 
@@ -491,9 +480,103 @@ func map<C: Context, T, U>(x: C<T>, f: T -> U) -> C<U> {
 
 ^ We might end up with something like this
 
-^ Note that this doesn't compile for a number of reasons that I don't need to get into right now
+^ Note that this doesn't actually compile because of limitations in the language
+
+^ In this theoretical implementation, we're declaring a protocol that has a contained type
+
+^ The only thing that this protocol requires is that conforming types implement `map`, which has the same basic type signature we've already seen.
 
 ^ This level of abstraction would lead to a whole bunch of new generalizations that would lead to safer, cleaner code.
+
+---
+
+## Hello {{NAME}} ##
+
+```swift
+func sayHello(names: Array<String>) -> Array<String> {
+  return names.map { "Hello \($0)!" }
+}
+```
+
+^ For example, we could easily write this function that says hello to a list of people
+
+---
+
+## Hello {{NAME}} ##
+
+```swift
+func sayHello(name: Optional<String>) -> Optional<String> {
+  return name.map { "Hello \($0)!" }
+}
+```
+
+^ And then we could reimplement it to say hello to an optional person
+
+---
+
+## Hello {{NAME}} ##
+
+```swift
+func sayHello(name: Result<String>) -> Result<String> {
+  return name.map { "Hello \($0)!" }
+}
+```
+
+^ And then we could reimplement it again to say hello to a Result person
+
+---
+
+## Hello {{NAME}} ##
+
+```swift
+func sayHello(name: Future<String>) -> Future<String> {
+  return name.map { "Hello \($0)!" }
+}
+```
+
+^ And again for a future person
+
+---
+
+## Hello {{NAME}} ##
+
+```swift
+func sayHello(name: Signal<String>) -> Signal<String> {
+  return name.map { "Hello \($0)!" }
+}
+```
+
+^ and yet again for a signal of people
+
+---
+
+## Hello {{NAME}} ##
+
+```swift
+func sayHello<C: Context>(name: C<String>) -> C<String> {
+  return name.map { "Hello \($0)!" }
+}
+```
+
+^ _or_ we could just write it once. We could write a function that works with all of those types we already talked about, as well as any type we might come up with in the future
+
+^ I want you to note, as well, that because the only thing we know about this `name` value is that it's a context that holds a string, the _only_ thing we can possibly do with it is map a function over it. That's a level of safety that you don't have in any of these other implementations.
+
+---
+
+## What if... ##
+
+```swift
+protocol Context<T> {
+  func map<U>(f: T -> U) -> Self<U>
+}
+
+func map<C: Context, T, U>(x: C<T>, f: T -> U) -> C<U> {
+  return x.map(f)
+}
+```
+
+^ So that's the kind of thing a type like this would allow us to do
 
 ---
 
@@ -504,22 +587,30 @@ protocol Functor<T> {
   func map<U>(f: T -> U) -> Self<U>
 }
 
-func map<C: Functor, T, U>(x: C<T>, f: T -> U) -> C<U> {
+func map<F: Functor, T, U>(x: F<T>, f: T -> U) -> F<U> {
   return x.map(f)
 }
 ```
 
 ^ As it turns out, this type already has a name: Functor.
 
-^ a Functor is simply a contextual type that responds to `map`. It's really as simple as that.
+^ Functor is one of those scary words from Functional Programming that I'd be willing to bet you've seen fly by on Twitter or StackOverflow
+
+^ It's probably been involved in some obscure metaphor trying to relate it to fish, or a burrito, or something.
+
+^ Functor is nothing to be afraid of, and as I hope you've gotten a glimpse of, is a fairly straightforward concept.
+
+^ A Functor is simply a contextual type that responds to `map`. It's really as simple as that.
 
 ---
 
 ![](http://27.media.tumblr.com/tumblr_lex3s2CgQN1qe0eclo1_r9_500.gif)
 
-^ Swift as a language is in flux right now, and we're shaping its future.
+^ I wanted to close out by saying that Swift is a language in flux, and we're shaping its future through our usage.
 
-^ I'm not saying that using `map` and other functional programming concepts are the end all solution for everything, but they are tools that are available for you, and avoiding them entirely because they come from a different idiom seems silly.
+^ the recent introduction of `flatMap` to the standard lib, which is like a beefed up version of `map` really reinforces my thoughts that we're headed for a _more_ functional future, not less.
+
+^ I'm not saying that using `map` and other functional programming concepts are the end all solution for everything, but they are tools that are available for you, and avoiding them entirely because they come from a different idiom seems short sighted.
 
 ---
 
