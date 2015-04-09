@@ -102,7 +102,7 @@ extension User: Decodable {
 
 ---
 
-## in the bad old days ##
+## In the Bad Old Days ##
 
 ```objc
 NSArray *numbers = @[@1, @2, @3, @4];
@@ -159,7 +159,7 @@ extension Array<T> {
 
 ---
 
-## usage ##
+## Usage ##
 
 ```swift
 let numbers = [1, 2, 3, 4]
@@ -176,7 +176,7 @@ let numbersPlusOne = numbers.map { $0 + 1 } // [2, 3, 4, 5]
 
 ---
 
-## bonus ##
+## Bonus ##
 
 ```swift
 func addOne(x: Int) -> Int {
@@ -193,7 +193,7 @@ let moreNumbers = numbers.map(addOne) // [2, 3, 4, 5]
 
 ---
 
-## Real world usage ##
+## Real World Usage ##
 
 ```swift
 struct User {
@@ -249,7 +249,7 @@ enum Optional<T> {
 
 ---
 
-## conditional unwrapping ##
+## Conditional Unwrapping ##
 
 ```swift
 let myOptional: String? = "Hello World"
@@ -295,7 +295,7 @@ extension Optional<T> {
 
 ---
 
-## usage ##
+## Usage ##
 
 ```swift
 let optional: String? = "foo"
@@ -328,7 +328,7 @@ let moreFoobar = optional.map(appendBar) // .Some("foobar")
 
 ---
 
-## Real world usage ##
+## Real World Usage ##
 
 ```swift
 let name = json["name"] // String?
@@ -354,7 +354,7 @@ let numberOfEmployees = company?.numberOfEmployees ?? 0 // Int
 
 ---
 
-## Spot the difference ##
+## Spot the Difference ##
 
 ```swift
 // Array
@@ -378,7 +378,7 @@ func map<T, U>(x: T?, f: T -> U) -> U?
 
 ---
 
-## Spot the difference ##
+## Spot the Difference ##
 
 ```swift
 // Array
