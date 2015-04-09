@@ -54,7 +54,7 @@ extension User: Decodable {
 
 ---
 
-![](http://gifsec.com/wp-content/uploads/GIF/2014/03/Stare-What-GIF.gif)
+![](images/wut.gif)
 
 ^ Every time I start talking about this stuff, I get at least one of these.
 
@@ -346,7 +346,7 @@ let numberOfEmployees = company?.numberOfEmployees ?? 0 // Int
 
 ---
 
-![](https://desperateandunrehearsed.files.wordpress.com/2015/02/whats-your-point.gif)
+![](images/whats-your-point.gif)
 
 ^ So what's going on here?
 
@@ -458,7 +458,7 @@ func map<T, U>(x:   Signal<T>, f: T -> U) ->   Signal<U>
 
 ---
 
-![](http://www.reactiongifs.us/wp-content/uploads/2014/05/everybody_got_that_spaceballs.gif)
+![](images/everybody-got-that.gif)
 
 ^ So what if we could generalize that contextual type into something more reusable.
 
@@ -604,7 +604,7 @@ func map<F: Functor, T, U>(x: F<T>, f: T -> U) -> F<U> {
 
 ---
 
-![](http://27.media.tumblr.com/tumblr_lex3s2CgQN1qe0eclo1_r9_500.gif)
+![](images/chewing.gif)
 
 ^ I wanted to close out by saying that Swift is a language in flux, and we're shaping its future through our usage.
 
