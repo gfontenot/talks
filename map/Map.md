@@ -438,7 +438,9 @@ func map<T, U>(x:   Future<T>, f: T -> U) ->   Future<U>
 
 ^ We could also represent the context of a value we don't have yet, using Future
 
-^ So if we `map` over a `Future` value, we apply the function to the value when we get it.
+^ A Future type would be returned from some kind of long running async task, representing a value that will exist at some point, but probably doesn't right now.
+
+^ So if we `map` over a `Future` value, we apply the function to the value when we actually get it.
 
 ---
 
