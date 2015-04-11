@@ -474,11 +474,11 @@ func map<T, U>(x:   Signal<T>, f: T -> U) ->   Signal<U>
 
 ```swift
 protocol Context<T> {
-  func map<U>(f: T -> U) -> Self<U>
+  func map<U>(transform: T -> U) -> Self<U>
 }
 
-func map<C: Context, T, U>(x: C<T>, f: T -> U) -> C<U> {
-  return x.map(f)
+func map<C: Context, T, U>(x: C<T>, transform: T -> U) -> C<U> {
+  return x.map(transform)
 }
 ```
 
@@ -574,11 +574,11 @@ func sayHello<C: Context>(name: C<String>) -> C<String> {
 
 ```swift
 protocol Context<T> {
-  func map<U>(f: T -> U) -> Self<U>
+  func map<U>(transform: T -> U) -> Self<U>
 }
 
-func map<C: Context, T, U>(x: C<T>, f: T -> U) -> C<U> {
-  return x.map(f)
+func map<C: Context, T, U>(x: C<T>, transform: T -> U) -> C<U> {
+  return x.map(transform)
 }
 ```
 
@@ -592,11 +592,11 @@ func map<C: Context, T, U>(x: C<T>, f: T -> U) -> C<U> {
 
 ```swift
 protocol Functor<T> {
-  func map<U>(f: T -> U) -> Self<U>
+  func map<U>(transform: T -> U) -> Self<U>
 }
 
-func map<F: Functor, T, U>(x: F<T>, f: T -> U) -> F<U> {
-  return x.map(f)
+func map<F: Functor, T, U>(x: F<T>, transform: T -> U) -> F<U> {
+  return x.map(transform)
 }
 ```
 
