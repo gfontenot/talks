@@ -470,7 +470,7 @@ func map<T, U>(x:   Signal<T>, f: T -> U) ->   Signal<U>
 
 ---
 
-## What if... ##
+## What if...[^1]
 
 ```swift
 protocol Context<T> {
@@ -491,6 +491,8 @@ func map<C: Context, T, U>(x: C<T>, f: T -> U) -> C<U> {
 ^ The only thing that this protocol requires is that conforming types implement `map`, which has the same basic type signature we've already seen.
 
 ^ This level of abstraction would lead to a whole bunch of new generalizations that would lead to safer, cleaner code.
+
+[^1]: rdar://problem/18575907
 
 ---
 
@@ -568,7 +570,7 @@ func sayHello<C: Context>(name: C<String>) -> C<String> {
 
 ---
 
-## What if... ##
+## What if...[^1]
 
 ```swift
 protocol Context<T> {
@@ -582,9 +584,11 @@ func map<C: Context, T, U>(x: C<T>, f: T -> U) -> C<U> {
 
 ^ So that's the kind of thing a type like this would allow us to do
 
+[^1]: rdar://problem/18575907
+
 ---
 
-## Turns out... ##
+## Turns out...[^1]
 
 ```swift
 protocol Functor<T> {
@@ -605,6 +609,8 @@ func map<F: Functor, T, U>(x: F<T>, f: T -> U) -> F<U> {
 ^ Functor is nothing to be afraid of, and as I hope you've gotten a glimpse of, is a fairly straightforward concept.
 
 ^ A Functor is simply a contextual type that responds to `map`. It's really as simple as that.
+
+[^1]: rdar://problem/18575907
 
 ---
 
