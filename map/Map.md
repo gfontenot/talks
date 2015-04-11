@@ -456,6 +456,8 @@ func map<T, U>(x:   Signal<T>, f: T -> U) ->   Signal<U>
 
 ^ Or maybe we want to represent the context of a value that changes over time, in which case we might look at Signal
 
+^ Signal values are used in ReactiveCocoa, for example
+
 ^ Mapping over a Signal of values leaves us with a new signal containing the transformed values.
 
 ---
