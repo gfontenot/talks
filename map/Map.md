@@ -484,7 +484,9 @@ func map<C: Context, T, U>(x: C<T>, transform: T -> U) -> C<U> {
 
 ^ We might end up with something like this
 
-^ Note that this doesn't actually compile because of limitations in the language
+^ Note that this doesn't actually compile
+
+^ Limitations in the language prevent us from creating generic protocols.
 
 ^ In this theoretical implementation, we're declaring a protocol that has a contained type
 
