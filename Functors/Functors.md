@@ -14,7 +14,7 @@
 
 ---
 
-## Runes ##
+## Runes[^1] ##
 
 ```swift
 // Optional:
@@ -30,13 +30,15 @@ public func >>-<T, U>(a: [T], f: T -> [U]) -> [U]
 public func pure<T>(a: T) -> [T]
 ```
 
+[^1]: https://github.com/thoughtbot/runes
+
 ^ Probably the most obvious offender of this claim is Runes.
 
 ^ Runes is a library that adds infix operators for some functional concepts (such as `map`, `apply`, and `flatMap`) that help bring Swift's syntax a little closer to that of Haskell, and open the doors for some pretty neat tricks in the language.
 
 ---
 
-## Argo ##
+## Argo[^2] ##
 
 ```swift
 extension User: Decodable {
@@ -49,6 +51,8 @@ extension User: Decodable {
   }
 }
 ```
+
+[^2]: https://github.com/thoughtbot/argo
 
 ^ More interesting to me, is Argo, which uses these functional concepts, along with some fancy tricks using Generics and a couple of custom operators of its own to ease the pain of parsing JSON in Swift, which is kind of a famously annoying problem at this point.
 
@@ -470,7 +474,7 @@ func map<T, U>(x:   Signal<T>, f: T -> U) ->   Signal<U>
 
 ---
 
-## What if...[^1]
+## What if...[^3]
 
 ```swift
 protocol Context<T> {
@@ -481,6 +485,8 @@ func map<C: Context, T, U>(x: C<T>, transform: T -> U) -> C<U> {
   return x.map(transform)
 }
 ```
+
+[^3]: rdar://problem/18575907
 
 ^ We might end up with something like this
 
@@ -493,8 +499,6 @@ func map<C: Context, T, U>(x: C<T>, transform: T -> U) -> C<U> {
 ^ The only thing that this protocol requires is that conforming types implement `map`, which has the same basic type signature we've already seen.
 
 ^ This level of abstraction would lead to a whole bunch of new generalizations that would lead to safer, cleaner code.
-
-[^1]: rdar://problem/18575907
 
 ---
 
@@ -572,7 +576,7 @@ func sayHello<C: Context>(name: C<String>) -> C<String> {
 
 ---
 
-## What if...[^1]
+## What if...[^3]
 
 ```swift
 protocol Context<T> {
@@ -586,11 +590,9 @@ func map<C: Context, T, U>(x: C<T>, transform: T -> U) -> C<U> {
 
 ^ So that's the kind of thing a type like this would allow us to do
 
-[^1]: rdar://problem/18575907
-
 ---
 
-## Turns out...[^1]
+## Turns out...[^3]
 
 ```swift
 protocol Functor<T> {
@@ -611,8 +613,6 @@ func map<F: Functor, T, U>(x: F<T>, transform: T -> U) -> F<U> {
 ^ Functor is nothing to be afraid of, and as I hope you've gotten a glimpse of, is a fairly straightforward concept.
 
 ^ A Functor is simply a contextual type that responds to `map`. It's really as simple as that.
-
-[^1]: rdar://problem/18575907
 
 ---
 
